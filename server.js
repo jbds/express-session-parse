@@ -46,7 +46,11 @@ app.post('/login', function(req, res) {
   console.log(`Updating session for user ${id}`);
   req.session.userId = id;
   // this should happen one time only, so good place to add to pointOfCompass array
-  gameState.pointOfCompassAndPlayers.push({pointOfCompass: "", player: id});
+  // but might happen more than once, so check array first
+  let arrObj = gameState.pointOfCompassAndPlayers.find(el => el.player == id);
+  if (!arrObj) {
+    gameState.pointOfCompassAndPlayers.push({pointOfCompass: "", player: id});
+  }
   //
   res.send({ result: 'OK', message: `Session created/updated for ${id}`});
   //console.log(gameState);
@@ -104,25 +108,28 @@ wss.on('connection', function(ws, req) {
     }
   );
 
-  function broadcastUserList() {
-    //WebSocket.Server.clients property is only added when the clientTracking is truthy.    
-    // broadcast to all clients
-    wss.clients.forEach(function each(client) {
-      // send a message to every connected client
-      if (client.readyState === WebSocket.OPEN) {
-        //client.send('Broadcast!');
-        //iterate over all connected users
-        let usersMessage = 'Online: ';
-        map.forEach(function(v, k) {
-            usersMessage += (k + ' ');
-          }
-        );
-        client.send(usersMessage);
-        console.log(Array.from(map.keys()));
-        //client.send({ usernames: '[Fred, Bill]'});
-      }
-    });
-  };
+  // at this point, all other clients will hear about the new user who is logging in
+  broadcastGameState(gameState);
+
+  // function broadcastUserList() {
+  //   //WebSocket.Server.clients property is only added when the clientTracking is truthy.    
+  //   // broadcast to all clients
+  //   wss.clients.forEach(function each(client) {
+  //     // send a message to every connected client
+  //     if (client.readyState === WebSocket.OPEN) {
+  //       //client.send('Broadcast!');
+  //       //iterate over all connected users
+  //       let usersMessage = 'Online: ';
+  //       map.forEach(function(v, k) {
+  //           usersMessage += (k + ' ');
+  //         }
+  //       );
+  //       client.send(usersMessage);
+  //       console.log(Array.from(map.keys()));
+  //       //client.send({ usernames: '[Fred, Bill]'});
+  //     }
+  //   });
+  // };
 
   //broadcastUserList();
   // instead of broadcasting the usersMessage, which is just a list of users
@@ -154,7 +161,6 @@ wss.on('connection', function(ws, req) {
     });
   }
 
-  broadcastGameState(gameState);
 
 
   ws.on('message', function(message) {
@@ -163,12 +169,12 @@ wss.on('connection', function(ws, req) {
     //
     console.log(`Received message ${message} from user ${userId}`);
 
-    broadcastUserList();
+    //broadcastUserList();
   });
 
   ws.on('close', function() {
     map.delete(userId);
-    broadcastUserList();
+    //broadcastUserList();
   });
 });
 
