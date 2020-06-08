@@ -19,6 +19,33 @@ let gameState = {
   pointOfCompassAndPlayers: []
 }
 
+// and a global function for rebroadcast, called by login, logout and message
+function broadcastGameState(gS){
+  //WebSocket.Server.clients property is only added when the clientTracking is truthy.    
+  // broadcast to all clients
+  wss.clients.forEach(function each(client) {
+    // send a message to every connected client
+    if (client.readyState === WebSocket.OPEN) {
+      //client.send('Broadcast!');
+      //iterate over all connected users
+      // let usersMessage = 'Online: ';
+      // map.forEach(function(v, k) {
+      //     usersMessage += (k + ' ');
+      //   }
+      // );
+      // client.send(usersMessage);
+      // console.log(Array.from(map.keys()));
+      //client.send({ usernames: '[Fred, Bill]'});
+      // we need to add to the pointOfCompassAndPlayers array
+      //let arrLength = gS.pointOfCompassAndPlayers.length;
+      //console.log('Array length: ' + arrLength);
+      //let userId = req.session.userId;
+      //gS.pointOfCompassAndPlayers.push({pointOfCompass: "", player: userId});
+      client.send(JSON.stringify(gS));
+    }
+  });
+}
+
 //
 // We need the same instance of the session parser in express and
 // WebSocket server.
@@ -62,6 +89,15 @@ app.delete('/logout', function(req, response) {
   // we will want to echo the logout username
   const oldId = req.body.userName;
   const ws = map.get(req.body.userName);
+
+  // BEFORE we destroy the session, we need to remove the user 
+  // from the pointOfCompassAndPlayers array
+  gameState.pointOfCompassAndPlayers = gameState.pointOfCompassAndPlayers.filter(obj => {
+    return obj.player !== oldId;
+  });
+  // and broadcast to all
+  broadcastGameState(gameState);
+
 
   console.log('Destroying session');
   req.session.destroy(function() {
@@ -134,32 +170,6 @@ wss.on('connection', function(ws, req) {
   //broadcastUserList();
   // instead of broadcasting the usersMessage, which is just a list of users
   // we want to broadcast the gameState modified to take account of latest logged in user
-
-  function broadcastGameState(gS){
-    //WebSocket.Server.clients property is only added when the clientTracking is truthy.    
-    // broadcast to all clients
-    wss.clients.forEach(function each(client) {
-      // send a message to every connected client
-      if (client.readyState === WebSocket.OPEN) {
-        //client.send('Broadcast!');
-        //iterate over all connected users
-        // let usersMessage = 'Online: ';
-        // map.forEach(function(v, k) {
-        //     usersMessage += (k + ' ');
-        //   }
-        // );
-        // client.send(usersMessage);
-        // console.log(Array.from(map.keys()));
-        //client.send({ usernames: '[Fred, Bill]'});
-        // we need to add to the pointOfCompassAndPlayers array
-        //let arrLength = gS.pointOfCompassAndPlayers.length;
-        //console.log('Array length: ' + arrLength);
-        //let userId = req.session.userId;
-        //gS.pointOfCompassAndPlayers.push({pointOfCompass: "", player: userId});
-        client.send(JSON.stringify(gS));
-      }
-    });
-  }
 
 
 
