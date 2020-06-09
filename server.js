@@ -19,13 +19,42 @@ let gameState = {
   pointOfCompassAndPlayers: []
 }
 
-// and a global function for rebroadcast, called by login, logout and message
-function broadcastGameState(gS){
+// and a global function for rebroadcast, called by login and logout
+function broadcastGameStateToAll(gS){
   //WebSocket.Server.clients property is only added when the clientTracking is truthy.    
   // broadcast to all clients
   wss.clients.forEach(function each(client) {
     // send a message to every connected client
     if (client.readyState === WebSocket.OPEN) {
+      //client.send('Broadcast!');
+      //iterate over all connected users
+      // let usersMessage = 'Online: ';
+      // map.forEach(function(v, k) {
+      //     usersMessage += (k + ' ');
+      //   }
+      // );
+      // client.send(usersMessage);
+      // console.log(Array.from(map.keys()));
+      //client.send({ usernames: '[Fred, Bill]'});
+      // we need to add to the pointOfCompassAndPlayers array
+      //let arrLength = gS.pointOfCompassAndPlayers.length;
+      //console.log('Array length: ' + arrLength);
+      //let userId = req.session.userId;
+      //gS.pointOfCompassAndPlayers.push({pointOfCompass: "", player: userId});
+      client.send(JSON.stringify(gS));
+    }
+  });
+}
+
+// and a global function for rebroadcast, called by message
+// (client !== ws) caused error until we passed this variable into the func
+function broadcastGameStateToOthers(gS, ws){
+  //WebSocket.Server.clients property is only added when the clientTracking is truthy.    
+  // broadcast to all clients
+  wss.clients.forEach(function each(client) {
+    // send a message to every connected client EXCEPT initiator
+    // to avoid an infinite handshake loop!
+    if (client !== ws && client.readyState === WebSocket.OPEN) {
       //client.send('Broadcast!');
       //iterate over all connected users
       // let usersMessage = 'Online: ';
@@ -96,7 +125,7 @@ app.delete('/logout', function(req, response) {
     return obj.player !== oldId;
   });
   // and broadcast to all
-  broadcastGameState(gameState);
+  broadcastGameStateToAll(gameState);
 
 
   console.log('Destroying session');
@@ -145,7 +174,7 @@ wss.on('connection', function(ws, req) {
   );
 
   // at this point, all other clients will hear about the new user who is logging in
-  broadcastGameState(gameState);
+  broadcastGameStateToAll(gameState);
 
   // function broadcastUserList() {
   //   //WebSocket.Server.clients property is only added when the clientTracking is truthy.    
@@ -180,6 +209,12 @@ wss.on('connection', function(ws, req) {
     console.log(`Received message ${message} from user ${userId}`);
 
     //broadcastUserList();
+
+    // set server gameState to the gameState sent as a message
+    gameState = JSON.parse(message);
+
+    // rebroadcast to others to update other's local state to server gameState
+    broadcastGameStateToOthers(gameState, ws);
   });
 
   ws.on('close', function() {
