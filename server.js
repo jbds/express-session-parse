@@ -13,10 +13,13 @@ const map = new Map();
 //const json_body_parser = bodyParser.json();
 
 // we need a global variable to hold initial and subsequent gameStates
+// this structure MUST match the client app state structure
 let gameState = {
   handVisible: {north: true, east: true, south: true, west: true},
   pack: [],
-  pointOfCompassAndPlayers: []
+  pointOfCompassAndPlayers: [],
+  randomInt: 0,
+  chicagoScoreSheet: []
 }
 
 // and a global function for rebroadcast, called by login and logout
