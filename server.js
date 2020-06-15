@@ -16,7 +16,7 @@ const map = new Map();
 // this structure MUST match the client app state structure
 let gameState = {
   chicagoScoreSheet: [],
-  dealer: undefined,
+  dealer: 0,
   handVisible: {north: true, east: true, south: true, west: true},
   lastAction: "None(fromServer)",
   pack: [],
