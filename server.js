@@ -15,11 +15,13 @@ const map = new Map();
 // we need a global variable to hold initial and subsequent gameStates
 // this structure MUST match the client app state structure
 let gameState = {
+  chicagoScoreSheet: [],
+  dealer: undefined,
   handVisible: {north: true, east: true, south: true, west: true},
+  lastAction: "None(fromServer)",
   pack: [],
   pointOfCompassAndPlayers: [],
-  randomInt: 0,
-  chicagoScoreSheet: []
+  randomInt: -999,
 }
 
 // and a global function for rebroadcast, called by login and logout
