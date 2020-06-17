@@ -14,6 +14,7 @@ const map = new Map();
 
 // we need a global variable to hold initial and subsequent gameStates
 // this structure MUST match the client app state structure
+// and each property must be iniialised to at least something even if empty
 let gameState = {
   chicagoScoreSheet: [],
   dealer: 0,
