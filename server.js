@@ -17,12 +17,14 @@ const map = new Map();
 // and each property must be iniialised to at least something even if empty
 let gameState = {
   chicagoScoreSheet: [],
-  dealer: 0,
+  dealer: undefined,
   handVisible: {north: true, east: true, south: true, west: true},
   lastAction: "None(fromServer)",
   pack: [],
   pointOfCompassAndPlayers: [],
   randomInt: -999,
+  dealIndex: -1,
+  isBiddingCycle: false
 }
 
 // and a global function for rebroadcast, called by login and logout
