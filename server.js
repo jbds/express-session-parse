@@ -15,16 +15,21 @@ const map = new Map();
 // we need a global variable to hold initial and subsequent gameStates
 // this structure MUST match the client app state structure
 // and each property must be iniialised to at least something even if empty
+// note bids = list(bid) when empty [] maps to javascript as plain 0
 let gameState = {
+  activePointOfCompass: undefined,
+  bids: 0,
   chicagoScoreSheet: [],
   dealer: undefined,
+  dealIndex: -1,
+  declarer: undefined,
   handVisible: {north: true, east: true, south: true, west: true},
+  isBiddingCycle: false,
+  isBiddingHideDenominationButtons: true,
   lastAction: "None(fromServer)",
   pack: [],
   pointOfCompassAndPlayers: [],
   randomInt: -999,
-  dealIndex: -1,
-  isBiddingCycle: false
 }
 
 // and a global function for rebroadcast, called by login and logout
