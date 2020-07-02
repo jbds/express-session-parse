@@ -120,7 +120,26 @@ app.post('/login', function(req, res) {
   if (!arrObj) {
     gameState.pointOfCompassAndPlayers.push({pointOfCompass: "", player: id});
   }
-  //
+  // we need to set activePointofCompass and dealer too
+  // ideally random
+  // only set it once!
+  if (gameState.activePointOfCompass == undefined || gameState.dealer == undefined) {
+    let rnd = Math.floor(Math.random() * 4);
+    let poc;
+    switch(rnd) {
+      case 0: poc = "West";
+      break;
+      case 1: poc = "North";
+      break;
+      case 2: poc = "East";
+      break;
+      case 3: poc = "South";
+      break;
+      default: poc = "West";
+    }
+    gameState.activePointOfCompass = poc;
+    gameState.dealer = poc;
+  }
   res.send({ result: 'OK', message: `Session created/updated for ${id}`});
   //console.log(gameState);
 });
