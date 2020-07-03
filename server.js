@@ -21,7 +21,7 @@ let gameState = {
   bids: 0,
   chicagoScoreSheet: 0,
   dealer: undefined,
-  dealIndex: -1,
+  dealIndex: 0,
   declarer: undefined,
   handVisible: {north: true, east: true, south: true, west: true},
   isBiddingCycle: false,
