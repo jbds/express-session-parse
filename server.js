@@ -26,6 +26,7 @@ let gameState = {
   handVisible: {north: true, east: true, south: true, west: true},
   isBiddingCycle: false,
   isBiddingHideDenominationButtons: true,
+  isDummyVisible: false,
   isRebootVisible: true,
   lastAction: "None(fromServer)",
   pack: [],
