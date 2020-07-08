@@ -24,6 +24,7 @@ let gameState = {
   dealIndex: -1,
   declarer: undefined,
   discardIndex: -1,
+  discardSuit: undefined,
   handVisible: {north: true, east: true, south: true, west: true},
   isBiddingCycle: false,
   isBiddingHideDenominationButtons: true,
