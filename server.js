@@ -14,7 +14,7 @@ const map = new Map();
 
 // we need a global variable to hold initial and subsequent gameStates
 // this structure MUST match the client app state structure
-// and each property must be iniialised to at least something even if empty
+// and each property must be initialised to at least something even if empty
 // note bids = list(bid), list(chicagoScoreSheet) when empty [] maps to javascript as plain 0
 let gameState = {
   activePointOfCompass: undefined,
@@ -35,6 +35,10 @@ let gameState = {
   pointOfCompassAndPlayers: [],
   randomInt: -999,
 }
+
+// Undo requires an array of gameState objects, initialised to just the above
+let arrGameStates = [gameState];
+
 
 // and a global function for rebroadcast, called by login and logout
 function broadcastGameStateToAll(gS){
@@ -209,6 +213,8 @@ wss.on('connection', function(ws, req) {
     }
   );
 
+  // push the state on to the history stack
+  arrGameStates.push(gameState);
   // at this point, all other clients will hear about the new user who is logging in
   broadcastGameStateToAll(gameState);
 
@@ -243,14 +249,24 @@ wss.on('connection', function(ws, req) {
     // Here we can now use session parameters.
     //
     console.log(`Received message ${message} from user ${userId}`);
+    console.log(message);
 
     //broadcastUserList();
 
-    // set server gameState to the gameState sent as a message
-    gameState = JSON.parse(message);
+    if (message === '"Undo"') {
+      //console.log('Undo not yet implemented')
+      gameState = arrGameStates.pop();
+      broadcastGameStateToAll(gameState);
+    } else {
+      // set server gameState to the gameState sent as a message
+      gameState = JSON.parse(message);
+      // push the state on to the history stack
+      arrGameStates.push(gameState);
+      //console.log(arrGameStates);
+      // rebroadcast to others to update other's local state to server gameState
+      broadcastGameStateToOthers(gameState, ws);
+    }
 
-    // rebroadcast to others to update other's local state to server gameState
-    broadcastGameStateToOthers(gameState, ws);
   });
 
   ws.on('close', function() {
