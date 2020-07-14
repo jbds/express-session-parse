@@ -30,11 +30,11 @@ let gameState = {
   isBiddingHideDenominationButtons: true,
   isDummyVisible: false,
   isRebootVisible: true,
-  lastAction: "None(fromServer)",
+  lastAction: "None(fromServer) then LoginSync(client)",
   pack: [],
   pointOfCompassAndPlayers: [],
   randomInt: -999,
-}
+};
 
 // Undo requires an array of gameState objects, initialised to just the above
 let arrGameStates = [gameState];
@@ -213,6 +213,8 @@ wss.on('connection', function(ws, req) {
     }
   );
 
+  console.log('about to broadcast gameState to ALL:');
+  console.log(gameState);
   // push the state on to the history stack
   arrGameStates.push(gameState);
   // at this point, all other clients will hear about the new user who is logging in
@@ -259,6 +261,8 @@ wss.on('connection', function(ws, req) {
       broadcastGameStateToAll(gameState);
     } else {
       // set server gameState to the gameState sent as a message
+      console.log('about to broadcast game state to others');
+      //console.log(gameState);
       gameState = JSON.parse(message);
       // push the state on to the history stack
       arrGameStates.push(gameState);
