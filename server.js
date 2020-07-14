@@ -36,6 +36,10 @@ let gameState = {
   randomInt: -999,
 };
 
+// shallow copy?
+let rebootGameState = JSON.parse(JSON.stringify(gameState));
+rebootGameState.pointOfCompassAndPlayers = [];
+
 // Undo requires an array of gameState objects, initialised to just the above
 let arrGameStates = [gameState];
 
@@ -122,6 +126,9 @@ app.post('/login', function(req, res) {
 
   console.log(`Updating session for user ${id}`);
   req.session.userId = id;
+
+  // push the state on to the history stack
+  arrGameStates.push(gameState);
   // this should happen one time only, so good place to add to pointOfCompass array
   // but might happen more than once, so check array first
   let arrObj = gameState.pointOfCompassAndPlayers.find(el => el.player == id);
@@ -213,10 +220,8 @@ wss.on('connection', function(ws, req) {
     }
   );
 
-  console.log('about to broadcast gameState to ALL:');
-  console.log(gameState);
-  // push the state on to the history stack
-  arrGameStates.push(gameState);
+  console.log('about to broadcast gameState to ALL');
+  //console.log(gameState);
   // at this point, all other clients will hear about the new user who is logging in
   broadcastGameStateToAll(gameState);
 
@@ -259,13 +264,23 @@ wss.on('connection', function(ws, req) {
       //console.log('Undo not yet implemented')
       gameState = arrGameStates.pop();
       broadcastGameStateToAll(gameState);
+    } else if (message === '"Reboot"') {
+      console.log('about to Reboot, and broadcast to ALL');
+      // destroy all history to free up memory
+      // no good because referenced elsewhere
+      //arrGameStates = [];
+      // SO 1232040
+      arrGameStates.length = 0;
+      // shallow copy? - is good enough to make pointOfCompassAndPlayers = []
+      gameState = JSON.parse(JSON.stringify(rebootGameState));
+      broadcastGameStateToAll(gameState);
     } else {
+      // push the state on to the history stack
+      arrGameStates.push(gameState);
       // set server gameState to the gameState sent as a message
       console.log('about to broadcast game state to others');
       //console.log(gameState);
       gameState = JSON.parse(message);
-      // push the state on to the history stack
-      arrGameStates.push(gameState);
       //console.log(arrGameStates);
       // rebroadcast to others to update other's local state to server gameState
       broadcastGameStateToOthers(gameState, ws);
