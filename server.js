@@ -256,7 +256,7 @@ wss.on('connection', function(ws, req) {
     // Here we can now use session parameters.
     //
     console.log(`Received message ${message} from user ${userId}`);
-    console.log(message);
+    //console.log(message);
 
     //broadcastUserList();
 
