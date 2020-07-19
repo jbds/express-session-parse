@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <!-- avoid zooming -->
+  <meta name="viewport" content="width=device-width, user-scalable=0">
+  <title>Bridget</title>
+  <link rel="shortcut icon" href="assets/favicon.ico">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #e0e0e0;
+      font-family: 'Trebuchet MS', 'Arial';
+      font-size: 3px;
+    }
+    table, th, td {
+      border: 1px solid #808080;
+      border-collapse: collapse;
+    }
+    /* TBLR are offsets from window edges */
+    /* Note left margin constraint to allow square card table */
+    #sidebar1 {
+    position: fixed;
+    top: 0;
+    bottom: 50%;
+    left: 100vh; /* fallback for no custom property support */
+    left: calc(var(--vh, 1vh) * 100);
+    right: 0;
+    background: #f8f8f8;
+    color: gray;
+    text-align: center;
+  }
+  #sidebar2 {
+    position: fixed;
+    top: 50%;
+    bottom: 5%;
+    left: 100vh; /* fallback for no custom property support */
+    left: calc(var(--vh, 1vh) * 100);
+    right: 0;
+    background: #e0e0e0;
+    color: gray;
+    text-align: center;
+  }
+  #sidebar3 {
+    position: fixed;
+    top: 95%;
+    bottom: 0;
+    left: 100vh; /* fallback for no custom property support */
+    left: calc(var(--vh, 1vh) * 100);
+    right: 0;
+    background: #f0f0f0;
+    color: black;
+    text-align: center;
+  }
+  #bidTable {
+    position: absolute;
+    top: 19vh;
+    top: calc(var(--vh, 1vh) * 19);
+    left: 25vh;
+    left: calc(var(--vh, 1vh) * 25);
+    width: 48vh;
+    width: calc(var(--vh, 1vh) * 48);
+    height: 40vh;
+    height: calc(var(--vh, 1vh) * 40);
+    z-index: 1;
+    background-color: #fff0d0;
+  }
+  #biddingWindow {
+    position: absolute;
+    top: 61vh;
+    top: calc(var(--vh, 1vh) * 61);
+    left: 19vh;
+    left: calc(var(--vh, 1vh) * 19);
+    width: 58vh;
+    width: calc(var(--vh, 1vh) * 58);
+    height: 17vh;
+    height: calc(var(--vh, 1vh) * 17);
+    z-index: 1;
+    background-color: #fff0d0;
+  }
+  </style>
+</head>
+
+<body>
+  <div id="root"></div>
+  <script src="./bundleOutput/index.js"></script>
+</body>
+
+</html>

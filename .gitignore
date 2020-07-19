@@ -1,5 +1,6 @@
 # we only want to track server.js
-public/
+# better to keep these files too
+# public/
 
 # Logs
 logs
